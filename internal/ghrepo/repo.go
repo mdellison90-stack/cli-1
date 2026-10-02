@@ -72,7 +72,7 @@ func FromURL(u *url.URL) (Interface, error) {
 }
 
 func normalizeHostname(h string) string {
-	return strings.ToLower(strings.TrimPrefix(h, "www."))
+	return strings.TrimPrefix(strings.ToLower(h), "www.")
 }
 
 // IsSame compares two GitHub repositories

@@ -276,3 +276,45 @@ func TestFormatRemoteURL(t *testing.T) {
 		})
 	}
 }
+
+func TestIsSame(t *testing.T) {
+	tests := []struct {
+		name string
+		a    Interface
+		b    Interface
+		want bool
+	}{
+		{
+			name: "case-insensitive names and www host",
+			a:    ghRepo{owner: "OWNER", name: "REPO", hostname: "WWW.GITHUB.COM"},
+			b:    ghRepo{owner: "owner", name: "repo", hostname: "github.com"},
+			want: true,
+		},
+		{
+			name: "different host",
+			a:    ghRepo{owner: "owner", name: "repo", hostname: "github.com"},
+			b:    ghRepo{owner: "owner", name: "repo", hostname: "enterprise.example.com"},
+			want: false,
+		},
+		{
+			name: "different owner",
+			a:    ghRepo{owner: "owner", name: "repo", hostname: "github.com"},
+			b:    ghRepo{owner: "other", name: "repo", hostname: "github.com"},
+			want: false,
+		},
+		{
+			name: "different repository",
+			a:    ghRepo{owner: "owner", name: "repo", hostname: "github.com"},
+			b:    ghRepo{owner: "owner", name: "other", hostname: "github.com"},
+			want: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := IsSame(tt.a, tt.b); got != tt.want {
+				t.Errorf("IsSame() = %t, want %t", got, tt.want)
+			}
+		})
+	}
+}
